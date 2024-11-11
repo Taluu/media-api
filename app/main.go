@@ -22,6 +22,7 @@ func main() {
 	tagsRegistry := adapters.NewFakeTagRegistry()
 	tagsService := services.NewTagService(tagsRegistry)
 	http.Handle("GET /tags", ports.NewHttpTagsList(tagsService))
+	http.Handle("POST /tags", ports.NewHttpTagCreate(tagsService))
 
 	fmt.Printf("Starting to listen on %s...", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
