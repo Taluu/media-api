@@ -24,6 +24,12 @@ func main() {
 	http.Handle("GET /tags", ports.NewHttpTagsList(tagsService))
 	http.Handle("POST /tags", ports.NewHttpTagCreate(tagsService))
 
+	mediasService := services.NewMediaService(
+		adapters.NewFakeMediaRepository(),
+		tagsRegistry,
+	)
+	http.Handle("GET /medias/{tag}", ports.NewHttpMediaSeatch(mediasService))
+
 	fmt.Printf("Starting to listen on %s...", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
