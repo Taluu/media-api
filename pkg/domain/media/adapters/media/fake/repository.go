@@ -20,14 +20,15 @@ type repository struct {
 	mtx    sync.RWMutex
 }
 
-func (r *repository) Create(ctx context.Context, name string) (Media, error) {
+func (r *repository) Create(ctx context.Context, name string, mimetype string) (Media, error) {
 	r.mtx.Lock()
 	defer r.mtx.Unlock()
 
 	id := uuid.NewString()
 	media := Media{
-		ID:   id,
-		Name: name,
+		ID:       id,
+		Name:     name,
+		Mimetype: mimetype,
 	}
 
 	r.medias[id] = media

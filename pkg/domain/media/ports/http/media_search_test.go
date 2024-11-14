@@ -18,13 +18,13 @@ func TestMediaSearch(t *testing.T) {
 
 	repository := adapters.NewFakeMediaRepository()
 	tagRegistry := adapters.NewFakeTagRegistry()
-	service := services.NewMediaService(repository, tagRegistry)
+	service := services.NewMediaService(repository, tagRegistry, adapters.NewFakeUploader())
 	server := NewMediaSearchHTTPPort(service)
 
 	// fixtures
-	service.Create(ctx, "media-1", []string{"tag-1", "tag-2"})
-	service.Create(ctx, "media-2", []string{"tag-1", "tag-3"})
-	service.Create(ctx, "media-3", []string{"tag-2", "tag-3"})
+	service.Create(ctx, "media-1", []string{"tag-1", "tag-2"}, nil, "")
+	service.Create(ctx, "media-2", []string{"tag-1", "tag-3"}, nil, "")
+	service.Create(ctx, "media-3", []string{"tag-2", "tag-3"}, nil, "")
 
 	t.Run("empty tag", func(t *testing.T) {
 		r := httptest.NewRequest("GET", "/medias/", nil)

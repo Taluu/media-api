@@ -16,9 +16,9 @@ func TestSearchByTag(t *testing.T) {
 	fakeMediaRepository := adapters.NewFakeMediaRepository()
 
 	// link a few medias
-	media1, _ := fakeMediaRepository.Create(ctx, "media-1")
-	media2, _ := fakeMediaRepository.Create(ctx, "media-2")
-	media3, _ := fakeMediaRepository.Create(ctx, "media-3")
+	media1, _ := fakeMediaRepository.Create(ctx, "media-1", "random/mime")
+	media2, _ := fakeMediaRepository.Create(ctx, "media-2", "random/mime")
+	media3, _ := fakeMediaRepository.Create(ctx, "media-3", "random/mime")
 
 	fakeTagRegistry.Link(ctx, "tag-1", media1.ID)
 	fakeTagRegistry.Link(ctx, "tag-2", media1.ID)
@@ -26,7 +26,7 @@ func TestSearchByTag(t *testing.T) {
 	fakeTagRegistry.Link(ctx, "tag-3", media2.ID)
 	fakeTagRegistry.Link(ctx, "tag-4", media3.ID)
 
-	service := NewMediaService(fakeMediaRepository, fakeTagRegistry)
+	service := NewMediaService(fakeMediaRepository, fakeTagRegistry, adapters.NewFakeUploader())
 	medias, tags, err := service.SearchByTag(ctx, "tag-1")
 	if err != nil {
 		t.Fatalf("an error ocurred while fetching data : %s", err)
@@ -67,11 +67,12 @@ func TestCreate(t *testing.T) {
 
 	fakeTagRegistry := adapters.NewFakeTagRegistry()
 	fakeMediaRepository := adapters.NewFakeMediaRepository()
+	fakeUploader := adapters.NewFakeUploader()
 
 	fakeTagRegistry.Create(ctx, "tag-1")
 
-	service := NewMediaService(fakeMediaRepository, fakeTagRegistry)
-	media, tags, err := service.Create(ctx, "media-1", []string{"tag-1", "tag-2"})
+	service := NewMediaService(fakeMediaRepository, fakeTagRegistry, fakeUploader)
+	media, tags, err := service.Create(ctx, "media-1", []string{"tag-1", "tag-2"}, []byte("content"), "random/mime")
 
 	if err != nil {
 		t.Fatalf("an error ocurred while fetching data : %s", err)
@@ -83,5 +84,10 @@ func TestCreate(t *testing.T) {
 
 	if media.Name != "media-1" {
 		t.Fatalf("expected the created media to have the name %q, got %q", "media-1", media.Name)
+	}
+
+	_, err = fakeUploader.GetContent(ctx, media.ID)
+	if err != nil {
+		t.Fatalf("an error occurred while uploading file : %s", err)
 	}
 }

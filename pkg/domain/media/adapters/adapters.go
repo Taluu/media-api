@@ -1,16 +1,15 @@
 package adapters
 
 import (
-	//lint:ignore ST1001
-	. "github.com/Taluu/media-go/pkg/domain/media"
 	mediaFake "github.com/Taluu/media-go/pkg/domain/media/adapters/media/fake"
 	tagFake "github.com/Taluu/media-go/pkg/domain/media/adapters/tag/fake"
+	uploaderFake "github.com/Taluu/media-go/pkg/domain/media/adapters/uploader/fake"
+	uploaderFile "github.com/Taluu/media-go/pkg/domain/media/adapters/uploader/fake"
 )
 
-func NewFakeMediaRepository() MediaRepository {
-	return mediaFake.NewFake()
-}
-
-func NewFakeTagRegistry() TagRegistry {
-	return tagFake.NewFake()
-}
+var (
+	NewFakeMediaRepository = mediaFake.NewFake
+	NewFakeTagRegistry     = tagFake.NewFake
+	NewFakeUploader        = uploaderFake.NewUploader
+	NewFileUploader        = uploaderFile.NewUploader
+)

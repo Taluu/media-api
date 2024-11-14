@@ -27,6 +27,7 @@ func main() {
 	mediasService := services.NewMediaService(
 		adapters.NewFakeMediaRepository(),
 		tagsRegistry,
+		adapters.NewFakeUploader(),
 	)
 	http.Handle("GET /medias/{tag}", ports.NewHttpMediaSeatch(mediasService))
 

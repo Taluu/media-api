@@ -13,7 +13,7 @@ func TestCreate(t *testing.T) {
 	defer cancel()
 
 	repository := NewFake()
-	media, err := repository.Create(ctx, "foo")
+	media, err := repository.Create(ctx, "foo", "random/mime")
 
 	if err != nil {
 		t.Fatalf("error while creating media object : %e", err)
@@ -37,11 +37,11 @@ func TestGetByIDs(t *testing.T) {
 	repository := NewFake()
 
 	// create 2 medias with same tag name in common
-	media1, _ := repository.Create(ctx, "foo")
-	media2, _ := repository.Create(ctx, "bar")
+	media1, _ := repository.Create(ctx, "foo", "random/mime")
+	media2, _ := repository.Create(ctx, "bar", "random/mime")
 
 	// create a media with no relation to the other 2
-	repository.Create(ctx, "baz")
+	repository.Create(ctx, "baz", "random/mime")
 
 	cases := []testCase{
 		{

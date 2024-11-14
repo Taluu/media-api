@@ -9,19 +9,20 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func NewMediaService(repository MediaRepository, tagRegistry TagRegistry) MediaService {
-	return &service{repository, tagRegistry}
+func NewMediaService(repository MediaRepository, tagRegistry TagRegistry, uploader MediaUploader) MediaService {
+	return &service{repository, tagRegistry, uploader}
 }
 
 type service struct {
 	MediaRepository
-	tags TagRegistry
+	tags     TagRegistry
+	uploader MediaUploader
 }
 
 // Create implements media.MediaService.
 // Subtle: this method shadows the method (MediaRepository).Create of service.MediaRepository.
-func (s *service) Create(ctx context.Context, name string, tags []string) (Media, []Tag, error) {
-	media, err := s.MediaRepository.Create(ctx, name)
+func (s *service) Create(ctx context.Context, name string, tags []string, fileContent []byte, mimetype string) (Media, []Tag, error) {
+	media, err := s.MediaRepository.Create(ctx, name, mimetype)
 	if err != nil {
 		return Media{}, nil, err
 	}
@@ -37,6 +38,8 @@ func (s *service) Create(ctx context.Context, name string, tags []string) (Media
 			tagsSlice = append(tagsSlice, Tag{Name: tag})
 		}
 	}
+
+	err = s.uploader.Upload(ctx, media.ID, fileContent)
 
 	return media, tagsSlice, err
 }
