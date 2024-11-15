@@ -6,4 +6,5 @@ var (
 	NewHttpTagsList    = http.NewHttpListServer
 	NewHttpTagCreate   = http.NewTagsCreateServer
 	NewHttpMediaSeatch = http.NewMediaSearchHTTPPort
+	NewHttpMediaCreate = http.NewMediaCreateHTTPServer
 )
