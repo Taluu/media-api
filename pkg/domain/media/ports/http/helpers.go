@@ -2,7 +2,10 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+
+	"github.com/Taluu/media-go/pkg/domain/media"
 )
 
 type httpError struct {
@@ -28,4 +31,19 @@ func jsonResponse(w http.ResponseWriter, data any, code int) {
 
 	encoder := json.NewEncoder(w)
 	encoder.Encode(data)
+}
+
+func toHttpCode(err error) (code int) {
+	switch {
+	case err == nil:
+		code = http.StatusOK
+	case errors.Is(err, media.ErrFileNotFound):
+		fallthrough
+	case errors.Is(err, media.ErrMediaNotFound):
+		code = http.StatusNotFound
+	default:
+		code = http.StatusInternalServerError
+	}
+
+	return
 }

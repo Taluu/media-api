@@ -19,16 +19,13 @@ type tagListServer struct {
 }
 
 func (s *tagListServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Received HTTP %s /tags\n", r.Method)
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
 	tags, err := s.GetAll(ctx)
 	if err != nil {
 		log.Println("error while getting the tags : ", err)
-		jsonError(w, "internal errror", 500)
-		log.Println("HTTP GET /tags : 500")
+		jsonError(w, "internal errror", toHttpCode(err))
 		return
 	}
 
@@ -38,9 +35,7 @@ func (s *tagListServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := tagsListHttp{Tags: tagsHttp}
-	jsonResponse(w, list, 200)
-
-	log.Println("HTTP GET /tags : 200")
+	jsonResponse(w, list, http.StatusOK)
 }
 
 type tagListHttp struct {

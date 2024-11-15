@@ -19,24 +19,20 @@ type mediaSearchServer struct {
 }
 
 func (m *mediaSearchServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Received HTTP %s /medias/%s\n", r.Method, r.PathValue("tag"))
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
 	tag := r.PathValue("tag")
 	if tag == "" {
 		log.Println("empty tag")
-		jsonError(w, "empty tag", 400)
-		log.Println("HTTP GET /medias/ : 400")
+		jsonError(w, "empty tag", http.StatusBadRequest)
 		return
 	}
 
 	medias, tags, err := m.service.SearchByTag(ctx, tag)
 	if err != nil {
 		log.Println("error while getting the medias : ", err)
-		jsonError(w, "internal errror", 500)
-		log.Printf("HTTP GET /medias/%s : 500", tag)
+		jsonError(w, "internal errror", toHttpCode(err))
 		return
 	}
 
@@ -56,9 +52,7 @@ func (m *mediaSearchServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	list := mediasSearchHTTP{Medias: mediasHttp}
-	jsonResponse(w, list, 200)
-
-	log.Printf("HTTP GET /medias/%s : 200", tag)
+	jsonResponse(w, list, http.StatusOK)
 }
 
 type mediasSearchHTTP struct {

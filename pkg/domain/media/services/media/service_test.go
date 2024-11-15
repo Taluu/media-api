@@ -68,10 +68,10 @@ func TestCreate(t *testing.T) {
 	fakeTagRegistry := adapters.NewFakeTagRegistry()
 	fakeMediaRepository := adapters.NewFakeMediaRepository()
 	fakeUploader := adapters.NewFakeUploader()
+	service := NewMediaService(fakeMediaRepository, fakeTagRegistry, fakeUploader)
 
 	fakeTagRegistry.Create(ctx, "tag-1")
 
-	service := NewMediaService(fakeMediaRepository, fakeTagRegistry, fakeUploader)
 	media, tags, err := service.Create(ctx, "media-1", []string{"tag-1", "tag-2"}, []byte("content"), "random/mime")
 
 	if err != nil {

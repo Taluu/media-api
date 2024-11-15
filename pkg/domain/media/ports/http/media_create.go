@@ -23,7 +23,6 @@ type mediaCreateServer struct {
 }
 
 func (m *mediaCreateServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Received HTTP %s /medias\n", r.Method)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
@@ -66,7 +65,6 @@ func (m *mediaCreateServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Tags: tagsListHttp,
 	}
 	jsonResponse(w, mediaResponse, http.StatusCreated)
-	log.Printf("HTTP POST /medias : 201")
 }
 
 func getFile(r *http.Request) (content []byte, filename string, mimetype string, err error) {
