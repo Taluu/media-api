@@ -1,11 +1,9 @@
 package http
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/Taluu/media-go/pkg/domain/media"
 )
@@ -19,8 +17,7 @@ type mediaSearchServer struct {
 }
 
 func (m *mediaSearchServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
+	ctx := r.Context()
 
 	tag := r.PathValue("tag")
 	if tag == "" {

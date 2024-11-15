@@ -1,12 +1,10 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/Taluu/media-go/pkg/domain/media"
 )
@@ -20,8 +18,7 @@ type tagCreateServer struct {
 }
 
 func (t *tagCreateServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
+	ctx := r.Context()
 
 	var request tagCreateHttp
 	decoder := json.NewDecoder(r.Body)

@@ -27,7 +27,7 @@ func TestMediaSearch(t *testing.T) {
 	service.Create(ctx, "media-3", []string{"tag-2", "tag-3"}, nil, "")
 
 	t.Run("empty tag", func(t *testing.T) {
-		r := httptest.NewRequest("GET", "/medias/", nil)
+		r := httptest.NewRequest("GET", "/medias/", nil).WithContext(ctx)
 		w := httptest.NewRecorder()
 		server.ServeHTTP(w, r)
 
@@ -57,7 +57,7 @@ func TestMediaSearch(t *testing.T) {
 	})
 
 	t.Run("no media", func(t *testing.T) {
-		r := httptest.NewRequest("GET", "/medias/tag-4", nil)
+		r := httptest.NewRequest("GET", "/medias/tag-4", nil).WithContext(ctx)
 		r.SetPathValue("tag", "tag-4")
 		w := httptest.NewRecorder()
 		server.ServeHTTP(w, r)
@@ -84,7 +84,7 @@ func TestMediaSearch(t *testing.T) {
 	})
 
 	t.Run("with medias", func(t *testing.T) {
-		r := httptest.NewRequest("GET", "/medias/tag-1", nil)
+		r := httptest.NewRequest("GET", "/medias/tag-1", nil).WithContext(ctx)
 		r.SetPathValue("tag", "tag-1")
 		w := httptest.NewRecorder()
 		server.ServeHTTP(w, r)

@@ -50,7 +50,7 @@ func TestTagCreateServer(t *testing.T) {
 
 		for _, tc := range testCases {
 			t.Run(tc.name, func(t *testing.T) {
-				r := httptest.NewRequest("POST", "/tags", strings.NewReader(string(tc.body)))
+				r := httptest.NewRequest("POST", "/tags", strings.NewReader(string(tc.body))).WithContext(ctx)
 				w := httptest.NewRecorder()
 				server.ServeHTTP(w, r)
 
@@ -82,7 +82,7 @@ func TestTagCreateServer(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		r := httptest.NewRequest("POST", "/tags", strings.NewReader(`{"name": "test"}`))
+		r := httptest.NewRequest("POST", "/tags", strings.NewReader(`{"name": "test"}`)).WithContext(ctx)
 		w := httptest.NewRecorder()
 		server.ServeHTTP(w, r)
 

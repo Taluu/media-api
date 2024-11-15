@@ -205,7 +205,7 @@ func TestMediaCreate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			r := prepareRequest(tc.data, tc.ext, tc.withFile)
+			r := prepareRequest(ctx, tc.data, tc.ext, tc.withFile)
 			w := httptest.NewRecorder()
 			server.ServeHTTP(w, r)
 
@@ -222,7 +222,7 @@ func TestMediaCreate(t *testing.T) {
 	}
 }
 
-func prepareRequest(data string, ext string, attachFile bool) *http.Request {
+func prepareRequest(ctx context.Context, data string, ext string, attachFile bool) *http.Request {
 	body := new(bytes.Buffer)
 	w := multipart.NewWriter(body)
 	w.WriteField("data", data)
@@ -241,6 +241,7 @@ func prepareRequest(data string, ext string, attachFile bool) *http.Request {
 
 	request := httptest.NewRequest("POST", "/medias", body)
 	request.Header.Add("Content-Type", w.FormDataContentType())
+	request = request.WithContext(ctx)
 
 	return request
 }

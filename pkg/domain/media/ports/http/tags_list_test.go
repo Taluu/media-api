@@ -23,7 +23,7 @@ func TestTagsList(t *testing.T) {
 	registry.Create(ctx, "tag-1")
 	registry.Create(ctx, "tag-2")
 
-	r := httptest.NewRequest("GET", "/tags", nil)
+	r := httptest.NewRequest("GET", "/tags", nil).WithContext(ctx)
 	w := httptest.NewRecorder()
 	server.ServeHTTP(w, r)
 

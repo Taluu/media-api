@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,7 +8,6 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
-	"time"
 
 	"github.com/Taluu/media-go/pkg/domain/media"
 )
@@ -23,8 +21,7 @@ type mediaCreateServer struct {
 }
 
 func (m *mediaCreateServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
+	ctx := r.Context()
 
 	var request mediaCreateRequest
 	data := r.FormValue("data")

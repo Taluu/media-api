@@ -1,10 +1,8 @@
 package http
 
 import (
-	"context"
 	"log"
 	"net/http"
-	"time"
 
 	//lint:ignore ST1001
 	. "github.com/Taluu/media-go/pkg/domain/media"
@@ -19,8 +17,7 @@ type tagListServer struct {
 }
 
 func (s *tagListServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
+	ctx := r.Context()
 
 	tags, err := s.GetAll(ctx)
 	if err != nil {
