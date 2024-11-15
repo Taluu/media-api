@@ -1,11 +1,15 @@
 package media
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"testing"
 	"time"
 
+	"github.com/Taluu/media-go/pkg/domain/media"
 	"github.com/Taluu/media-go/pkg/domain/media/adapters"
+	"github.com/google/uuid"
 )
 
 func TestSearchByTag(t *testing.T) {
@@ -90,4 +94,59 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("an error occurred while uploading file : %s", err)
 	}
+}
+
+func TestView(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	fakeMediaRepository := adapters.NewFakeMediaRepository()
+
+	service := NewMediaService(
+		fakeMediaRepository,
+		adapters.NewFakeTagRegistry(),
+		adapters.NewFakeUploader(),
+	)
+
+	// fixtures
+	mediaOK, _, _ := service.Create(ctx, "media-1", nil, []byte("file content"), "random/type")
+	mediaNotUploader, _ := fakeMediaRepository.Create(ctx, "media-2", "")
+
+	t.Run("media does not exists", func(t *testing.T) {
+		_, _, err := service.View(ctx, uuid.NewString())
+		if err == nil {
+			t.Error("Expected an error, got non")
+		}
+
+		if !errors.Is(err, media.ErrMediaNotFound) {
+			t.Errorf("expected a media not found error, got %q", err)
+		}
+	})
+
+	t.Run("unknown file", func(t *testing.T) {
+		_, _, err := service.View(ctx, mediaNotUploader.ID)
+		if err == nil {
+			t.Error("Expected an error, got non")
+			return
+		}
+
+		if !errors.Is(err, media.ErrFileNotFound) {
+			t.Errorf("expected a not found error, got %s", err)
+		}
+	})
+
+	t.Run("nominal", func(t *testing.T) {
+		content, mimetype, err := service.View(ctx, mediaOK.ID)
+		if err != nil {
+			t.Errorf("Unexpected error")
+		}
+
+		if !bytes.Equal(content, []byte("file content")) {
+			t.Errorf("Not the expected content : expected %q, got %q", "file content", string(content))
+		}
+
+		if mimetype != "random/type" {
+			t.Errorf("Not the expected type : expected %q, got %q", "random/type", mimetype)
+		}
+	})
 }

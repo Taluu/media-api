@@ -19,6 +19,22 @@ type service struct {
 	uploader MediaUploader
 }
 
+// View implements media.MediaService.
+func (s *service) View(ctx context.Context, id string) (fileContent []byte, mimetype string, err error) {
+	medias, err := s.GetByIDs(ctx, id)
+	if err != nil {
+		return
+	}
+
+	if _, exists := medias[id]; !exists {
+		err = MediaNotFound(id)
+		return
+	}
+
+	uploadedContent, err := s.uploader.GetContent(ctx, id)
+	return uploadedContent, medias[id].Mimetype, err
+}
+
 // Create implements media.MediaService.
 // Subtle: this method shadows the method (MediaRepository).Create of service.MediaRepository.
 func (s *service) Create(ctx context.Context, name string, tags []string, fileContent []byte, mimetype string) (Media, []Tag, error) {

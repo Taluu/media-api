@@ -29,6 +29,7 @@ func main() {
 	// medias routes
 	http.Handle("GET /medias/{tag}", ports.NewHttpMediaSeatch(mediasService))
 	http.Handle("POST /medias", ports.NewHttpMediaCreate(mediasService))
+	http.Handle("GET /viewer/{id}", ports.NewHttpMediaViewer(mediasService))
 
 	// http server
 	host := flag.String("host", "localhost", "Set the host")

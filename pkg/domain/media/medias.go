@@ -18,6 +18,7 @@ type MediaRepository interface {
 type MediaService interface {
 	SearchByTag(ctx context.Context, tagName string) ([]Media, map[string][]Tag, error)
 	Create(ctx context.Context, name string, tags []string, fileContent []byte, mimetype string) (Media, []Tag, error)
+	View(ctx context.Context, id string) (fileContent []byte, mimetype string, err error)
 }
 
 type MediaUploader interface {
