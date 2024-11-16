@@ -9,6 +9,7 @@ import (
 	"github.com/Taluu/media-go/pkg/domain/media/adapters"
 	"github.com/Taluu/media-go/pkg/domain/media/ports"
 	"github.com/Taluu/media-go/pkg/domain/media/services"
+	"github.com/Taluu/media-go/pkg/middleware"
 )
 
 func main() {
@@ -23,13 +24,13 @@ func main() {
 	)
 
 	// tags
-	http.Handle("GET /tags", ports.NewHttpTagsList(tagsService))
-	http.Handle("POST /tags", ports.NewHttpTagCreate(tagsService))
+	http.Handle("GET /tags", middleware.LogMiddleware(ports.NewHttpTagsList(tagsService)))
+	http.Handle("POST /tags", middleware.LogMiddleware(ports.NewHttpTagCreate(tagsService)))
 
 	// medias routes
-	http.Handle("GET /medias/{tag}", ports.NewHttpMediaSeatch(mediasService))
-	http.Handle("POST /medias", ports.NewHttpMediaCreate(mediasService))
-	http.Handle("GET /viewer/{id}", ports.NewHttpMediaViewer(mediasService))
+	http.Handle("GET /medias/{tag}", middleware.LogMiddleware(ports.NewHttpMediaSeatch(mediasService)))
+	http.Handle("POST /medias", middleware.LogMiddleware(ports.NewHttpMediaCreate(mediasService)))
+	http.Handle("GET /viewer/{id}", middleware.LogMiddleware(ports.NewHttpMediaViewer(mediasService)))
 
 	// http server
 	host := flag.String("host", "localhost", "Set the host")
